@@ -32,31 +32,31 @@ class DatabaseConnection {
 
 
     async connect() {
-     try {
-           if (!process.env.MONGO_URI) {
-               throw new Error("MONGODB URI is not defined in env variables")
-           }
-   
-           const connectionOptions = {
-               useNewUrlParser: true,
-               useUnifiedTopology: true,
-               maxPoolSize: 10,
-               serverSelectionTimeoutMS: 5000,
-               socketTimeoutMS: 45000,
-               family: 4 // use ipv4
-           };
-   
-           if (process.env.NODE_ENV === 'development') {
-               mongoose.set('debug', true)
-           }
-   
-           await mongoose.connect(process.env.MONGO_URI, connectionOptions)
-           this.retryCount = 0 // reset retry count on success
-     } catch (error) {
-        console.error(error.message);
-        await this.handleConnectionError()
-        
-     }
+        try {
+            if (!process.env.MONGO_URI) {
+                throw new Error("MONGODB URI is not defined in env variables")
+            }
+
+            const connectionOptions = {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                maxPoolSize: 10,
+                serverSelectionTimeoutMS: 5000,
+                socketTimeoutMS: 45000,
+                family: 4 // use ipv4
+            };
+
+            if (process.env.NODE_ENV === 'development') {
+                mongoose.set('debug', true)
+            }
+
+            await mongoose.connect(process.env.MONGO_URI, connectionOptions)
+            this.retryCount = 0 // reset retry count on success
+        } catch (error) {
+            console.error(error.message);
+            await this.handleConnectionError()
+
+        }
 
 
 
