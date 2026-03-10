@@ -25,9 +25,11 @@ class DatabaseConnection {
 
         mongoose.connection.on("disconnected", () => {
             console.log("MONGODB  disconnected  ");
-            this.isConnected = false
-            //  TODO    : attempt a reconnction
-        })
+            this.handleDisconnection()
+
+        });
+
+        process.on('SIGTERM', this.handleAppTermination.bind(this))
     }
 
 
@@ -71,10 +73,53 @@ class DatabaseConnection {
                 resolve
             }, RETRY_INTERVAL))
             return this.connect()
+        }
+        else {
+            console.error(`Failed to connect to mongoDB afer ${MAX_RETRIES}`)
+            process.exit(1)
+        }
+    }
+
+    async handleDisconnection() {
+        if (!this.isConnected) {
+            console.log("attempting to reconnect to mongodb...");
+            this.connect()
+        }
 
 
 
+    }
+
+    async handleAppTermination() {
+        try {
+            await mongoose.connection.close()
+            console.log("MongoDB collection closed through the app termination");
+            process.exit(0)
+
+        } catch (error) {
+            console.error("Error during database disconnection", error);
+            process.exit(1)
 
         }
     }
+
+    getConnectionStatus() {
+        return {
+            isConnected: this.isConnected,
+            readyState: mongoose.connection.readyState,
+            host: mongoose.connection.host,
+            name: mongoose.connection.name
+        }
+    }
+
+
 }
+
+
+
+// create singleton instance
+const dbConnection = new DatabaseConnection()
+
+export default dbConnection.connect.bind(dbConnection)
+export const getDBStatus = dbConnection.getConnectionStatus.bind(dbConnection)   // BIND --> call any method of that class
+
