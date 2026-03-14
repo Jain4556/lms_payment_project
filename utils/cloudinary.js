@@ -31,17 +31,16 @@ export const uploadMedia = async function (file) {
 
 export const deleteMediaFromCloudinary = async (publicId) => {
     try {
-       await cloudinary.uploader.destroy(publicId) 
+        await cloudinary.uploader.destroy(publicId)
     } catch (error) {
         console.log("Failed to delete media from cloudinary");
         console.error(error)
     }
 }
 
-
 export const deleteVideoFromCloudinary = async (publicId) => {
     try {
-       await cloudinary.uploader.destroy(publicId, {resource_type: "video"}) 
+        await cloudinary.uploader.destroy(publicId, { resource_type: "video" })
     } catch (error) {
         console.log("Failed to delete media from cloudinary");
         console.error(error)
