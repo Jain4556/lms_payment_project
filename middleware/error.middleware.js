@@ -17,3 +17,7 @@ export const catchAsync = (fn) => {
     }
 }
 
+// handle JWT error
+export const handleJWTError = () => {
+    new ApiError('Invalid token. Please log in again', 401)
+}
